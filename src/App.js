@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{Component} from 'react'
+import { Cards, Chart, CountryPicker } from './components';
+import { fetchData } from './api';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import CronaImg from "./images/image2.png";
+
+import styles from './App.module.css';
+class App extends Component {
+
+  state = {
+    data: {},
+    country:''
+  }
+  
+  async componentDidMount() {
+    const fetchedData = await fetchData();
+    this.setState({data:fetchedData})
+  }
+
+  handleChangeCountry = async (country) => {
+    const fetchedData = await fetchData(country);
+    
+    this.setState({data:fetchedData,country:country});
+  }
+
+  render() {
+    const {data,country} = this.state;
+    return (
+      <div className={`container text-center h-100 ${styles.App}`}>
+        <img src={CronaImg} className="img-fluid" alt=""/>
+        <div className="row h-100 justify-content-center align-items-center">
+          <div className="col-sm-12">
+            <CountryPicker handleChangeCountry={this.handleChangeCountry} />
+            <Cards data={ data } />
+            <Chart data={data} country={country} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
-
 export default App;
